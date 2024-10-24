@@ -1,0 +1,80 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+{% include 'includes/jsTruncateChar.html' %}
+<div class="card">
+    <div class="card-header">
+        <div class="col-md-2">
+            <h6 class="title">Brand List</h6>
+        </div>
+    </div>
+    <div class="custom-tab-1 p-3">
+        <div class="row pt-3 pb-0">
+            <div class="col-md-9">
+                <form method="get" action="" class="row col-12">
+                    <div class="col-md-6 col-sm-6 mb-2">
+                        <input type="text" class="form-control" name="category_name" placeholder="Search by brand..." value="{{ request.GET.item_name }}">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3" align="right">
+                <a href="{% url 'add_brand' %}" class="btn btn-sm btn-primary px-3">+ Add New</a>
+                <a href="" class="btn btn-sm light btn-primary px-3"><span class="fa fa-file-export"> </span> Export</a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive active-projects" style="min-height:500px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Brand</th>
+                            <th>Slug</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if page_objs %}
+                    {% for item in page_objs %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href=""><i class="mdi mdi-pencil text-primary"></i> {{item.brand_name}} </a></td>
+                            <td>{{item.slug}}</td>
+                            <td id="dynamic-truncate">{{item.description}}</td>
+                            <td>{% if item.is_active %} <span class="badge badge-success">Active</span> {% else %} <span class="badge badge-danger"> Inactive</span> {% endif %}</td>
+                            <td class="py-2 text-end">
+                                <div class="dropdown" align="right">
+                                  <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="fa fa-ellipsis-v"></span>
+                                  </button>
+                                  <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="">Edit</a>
+                                    <div class="dropdown-divider"></div>
+                                    {% if item.is_active %}
+                                        <a class="dropdown-item text-danger update_status" data-id="{{ item.id }}" href="#" data-url="">Inactive</a>
+                                    {% else %}
+                                        <a class="dropdown-item text-success update_status" data-id="{{ item.id }}" href="#" data-url="">Active</a>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align:center">No data!</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% include 'includes/pagination.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

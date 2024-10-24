@@ -1,0 +1,54 @@
+{% if form.errors %}
+    {% for field in form %}
+
+        {% for error in field.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <strong style="text-transform:capitalize;">{{field.name}}!</strong> {{ error }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+
+{% if form.non_field_errors %}
+    <div class="error">
+        <strong>Error!</strong> Please correct the following:
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <strong></strong> {{ error }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %} alert-dismissible fade show" role="alert">
+      <strong style="text-transform:capitalize;">{{message.tags}}! </strong> {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+    // Wait for the document to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the alert element by its ID
+        var gAlert = document.getElementById('g-alert');
+
+        // Check if the alert element exists
+        if (gAlert) {
+            // Close the alert after 3 seconds (3000 milliseconds)
+            setTimeout(function() {
+                gAlert.style.display = 'none';
+            }, 5000);
+        }
+    });
+</script>

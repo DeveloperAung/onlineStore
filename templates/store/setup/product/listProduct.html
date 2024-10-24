@@ -1,0 +1,89 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+<div class="card">
+    <div class="card-header">
+        <div class="col-md-2">
+            <h6 class="title">Product List</h6>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="row">
+            <div class="col-md-9">
+                <form method="get" action="" class="row">
+                    <div class="col-md-6 mb-2">
+                        <input type="text" class="form-control" name="item_name" placeholder="Search by product name..." value="{{ request.GET.product_name }}">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3" align="right">
+                <a href="{% url 'add_product' %}" class="btn btn-sm btn-success px-3">+ Add New</a>
+                <a href="" class="btn btn-sm light btn-primary px-3"><span class="fa fa-file-export"> </span> Export</a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive" style="min-height:500px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Product</th>
+                            <th>Slug</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Available?</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if page_objs %}
+                    {% for item in page_objs %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{{ item.get_url }}"><i class="mdi mdi-pencil text-primary"></i> {{item.code}} </a></td>
+                            <td>{{item.product_name}}</td>
+                            <td>{{item.slug}}</td>
+                            <td>{{item.price}}</td>
+                            <td></td>
+                            <td>{{item.category.category_name}}</td>
+                            <td>{{item.brand.brand_name}}</td>
+                            <td>{% if item.is_available %} <span class="badge badge-success">Available</span> {% else %} <span class="badge badge-danger"> Not Available</span> {% endif %}</td>
+                            <td>{% if item.is_active %} <span class="badge badge-success">Active</span> {% else %} <span class="badge badge-danger"> Inactive</span> {% endif %}</td>
+                            <td class="py-2 text-end">
+                                <div class="dropdown" align="right">
+                                  <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="fa fa-ellipsis-v"></span>
+                                  </button>
+                                  <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="">Edit</a>
+                                    <div class="dropdown-divider"></div>
+                                    {% if item.is_active %}
+                                        <a class="dropdown-item text-danger update_status" data-id="{{ item.id }}" href="#" data-url="">Inactive</a>
+                                    {% else %}
+                                        <a class="dropdown-item text-success update_status" data-id="{{ item.id }}" href="#" data-url="">Active</a>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="15" style="text-align:center">No data!</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% include 'includes/pagination.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

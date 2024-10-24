@@ -1,0 +1,34 @@
+<nav class="mt-4" aria-label="Page navigation">
+    <div class="row">
+        <div class="text-start col-md-6 mb-2"> Showing <b>{{ page_objs.start_index }}-{{ page_objs.end_index }}</b> out of <b>{{page_objs.paginator.count }}</b> entries</div>
+        <div class="float-right col-md-6">
+            {% if page_objs.has_other_pages %}
+                <ul class="pagination">
+                    {% if page_objs.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_objs.previous_page_number }}&{{ query_string }}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    {% endif %}
+                    {% for i in page_objs.adjusted_elided_pages %}
+                        {% if i == '…' %}
+                            <li class="page-item disabled"><a class="page-link" href="#">{{ i }}</a></li>
+                        {% elif page_objs.number == i %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ i }}&{{ query_string }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_objs.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_objs.next_page_number }}&{{ query_string }}">Next</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#"> Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>

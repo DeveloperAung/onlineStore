@@ -1,0 +1,45 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+
+<div class="row">
+    <div class="card profile-card card-bx m-b30 form-validation">
+        <div class="card-header">
+            <div class="col-md-2">
+                <h6 class="title">Brand setup</h6>
+            </div>
+        </div>
+        <form class="profile-form needs-validation" action="{% url 'add_brand' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+            <div class="mt-2 row">
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Brand Name<span style="color:red"> *</span></label>
+                    {{ form.brand_name }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Slug<span style="color:red"> *</span></label>
+                    {{ form.slug }}
+                </div>
+
+                <div class="mb-3 col-12">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <div class="mb-3 col-12">
+                    <label class="form-label">Logo </label>
+                    {{ form.brand_logo }}
+                </div>
+
+            </div>
+            <div class="mt-2">
+                <input type="submit" class="btn btn-primary px-4" id="id_submit" value="Submit">
+                <a type="button" href="{% url 'list_brand' %}" class="btn btn-outline-secondary" value="Cancel">Cancel</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

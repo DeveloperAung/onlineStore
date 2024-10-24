@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="section-conten padding-y bg">
+
+<div class="container">
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+	{% include 'includes/dashboardSidebar.html' %}
+	<main class="col-md-9">
+		<article class="card">
+			{% block setup %}
+			{% endblock %}
+		</article>
+	</main>
+</div>
+</div>
+
+
+</section>
+
+{% endblock %}

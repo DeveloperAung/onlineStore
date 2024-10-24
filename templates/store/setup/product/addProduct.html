@@ -1,0 +1,80 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+{% include 'includes/jsAllowMultipleFiles.html' %}
+<div class="row">
+    <div class="card profile-card card-bx m-b30 form-validation">
+        <div class="card-header">
+            <div class="col-md-2">
+                <h6 class="title">Product setup</h6>
+            </div>
+        </div>
+        <form class="profile-form needs-validation" action="{% url 'add_product' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+            <div class="mt-2 row">
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Product code<span style="color:red"> *</span></label>
+                    {{ form.code }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Product name<span style="color:red"> *</span></label>
+                    {{ form.product_name }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Slug<span style="color:red"> *</span></label>
+                    {{ form.slug }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                  <label class="form-label">Unit Price<span style="color:red"> *</span></label>
+                  {{ form.price }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Category<span style="color:red"> *</span></label>
+                    {{ form.category }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Brand<span style="color:red"> *</span></label>
+                    {{ form.brand }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Alert Low Stock Qty <i> {{ form.is_use_low_stock }}</i></label>
+                    {{ form.low_lvl_stock }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Is Available? </label>
+                    {{ form.is_available }}
+                </div>
+
+                <div class="mb-3 col-12">
+                    <label class="form-label">Description </label>
+                    {{ form.description }}
+                </div>
+
+                <div class="mb-3 col-12">
+                    <label class="form-label">Main Image </label>
+                    {{ form.images }}
+                </div>
+
+                <div class="mb-3 col-12">
+                    <label class="form-label">Other Images </label>
+                    {{ form_gallery.image }}
+                </div>
+
+            </div>
+            <div class="mt-2">
+                <input type="submit" class="btn btn-primary px-4" id="id_submit" value="Submit">
+                <a type="button" href="{% url 'list_product' %}" class="btn btn-outline-secondary" value="Cancel">Cancel</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

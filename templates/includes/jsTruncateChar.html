@@ -1,0 +1,20 @@
+<script>
+    function truncateText() {
+        const element = document.getElementById('dynamic-truncate');
+        const fullText = element.innerHTML;
+        let truncatedText = fullText;
+
+        if (window.innerWidth < 600) {
+            truncatedText = fullText.slice(0, 50) + '...';  // for small screens
+        } else if (window.innerWidth >= 600 && window.innerWidth <= 1024) {
+            truncatedText = fullText.slice(0, 100) + '...'; // for tablets
+        } else {
+            truncatedText = fullText.slice(0, 250) + '...'; // for larger screens
+        }
+
+        element.innerHTML = truncatedText;
+    }
+
+    window.onload = truncateText;
+    window.onresize = truncateText;
+</script>
