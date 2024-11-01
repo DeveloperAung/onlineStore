@@ -11,51 +11,58 @@
       <div class="row align-items-center">
         <div class="col-lg-2 col-md-3 col-6">
           <a href="{% url 'home' %}" class="brand-wrap">
-            <img class="logo" src="{% static './images/logo.png' %}">
+            <img class="logo" src="{{ info.logo.url }}">
           </a>
         </div>
         <div class="col-lg col-sm col-md col-6 flex-grow-0">
           <div class="category-wrap dropdown d-inline-block float-right">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bars"></i> All category
+              <i class="fa fa-bars"></i> All Categories
             </button>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="{% url 'store' %}">All Products </a>
-              {% for category in links %}
+              {% for category in category_links %}
                 <a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }} </a>
               {% endfor %}
+              <hr>
+              {% for brand in brand_links %}
+                <a class="dropdown-item" href="{{ brand.get_url }}">{{ brand.brand_name }} </a>
+              {% endfor %}
             </div>
+
           </div>
         </div>
-        <a href="{% url 'store' %}" class="btn btn-outline-primary">Store</a>
-        <div class="col-lg  col-md-6 col-sm-12 col">
+        <div class="mt-3">
+            <a href="{% url 'store' %}" class="btn btn-outline-primary mb-3">Store</a>
+        </div>
+
+        <div class="col-lg col-md-12 col-sm-12">
           <form action="{% url 'search' %}" class="search" method='GET'>
             <div class="input-group w-100">
                 <input type="text" class="form-control" style="width:60%;" placeholder="Search" name="keyword" value="{{request.GET.keyword}}">
-
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="submit">
                     <i class="fa fa-search"></i>
                   </button>
                 </div>
-              </div>
+            </div>
           </form>
         </div>
-        <div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
+        <div class="col-lg-3 col-sm-12 col-8 order-2 order-lg-3">
               <div class="d-flex justify-content-end mb-3 mb-lg-0">
                 {% if user.id is None %}
                 <div class="widget-header">
                   <small class="title text-muted">Welcome guest!</small>
                   <div>
                     <a href="{% url 'login' %}">Sign in</a> <span class="dark-transp"> | </span>
-                    <a href=""> Register</a>
+                    <a href="{% url 'register' %}"> Register</a>
                   </div>
                 </div>
                 {% else %}
                 <div class="widget-header">
                   <span class="title">Logged in as: <small class="text-muted">{{user.username}}!</small></span>
                   <div>
-                    <a href="{% url 'dashboard' %}">Dashboard</a> <span class="dark-transp"> | </span>
+                    <a href="{% url 'my_account' %}">Dashboard</a> <span class="dark-transp"> | </span>
                     <a href="{% url 'logout' %}"> Logout</a>
                   </div>
                 </div>

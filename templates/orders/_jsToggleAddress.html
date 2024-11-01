@@ -1,0 +1,26 @@
+<script>
+    function toggleDeliveryAddress() {
+        var select = document.getElementById("orderType");
+        var cardDelivery = document.getElementById("optionDelivery");
+
+        var postalCodeField = document.getElementById('postal_code');
+        var addressLine1Field = document.getElementById('address_line_1');
+
+        if (select.value === "deli") {
+            // Show the delivery section and enable required fields
+            cardDelivery.style.display = "block";
+            postalCodeField.setAttribute('required', 'required');
+            addressLine1Field.setAttribute('required', 'required');
+        } else {
+            // Hide the delivery section and remove required attributes
+            cardDelivery.style.display = "none";
+            postalCodeField.removeAttribute('required');
+            addressLine1Field.removeAttribute('required');
+        }
+    }
+
+    // Initialize visibility on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleCard(); // Set the correct visibility based on the default selected option
+    });
+</script>

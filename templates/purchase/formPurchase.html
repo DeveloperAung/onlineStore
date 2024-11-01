@@ -1,0 +1,144 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% load static %}
+{% block setup %}
+<style>
+    @media (max-width: 768px) {
+        .btn, .btn-group {
+            width:100%;
+        }
+    }
+</style>
+<link rel="stylesheet" href="{% static 'vendor/select2/css/select2.min.css' %}">
+<div class="card-header">
+    <div class="row">
+        <div class="col-md-6 mt-2">
+            <h6 class="title">Purchase Items</h6>
+        </div>
+        <div class="col-md-6 mt-2 text-left text-lg-right">
+            <ol>
+                <dl class="p-0">Purchase Date: <span class="b">{{ purchase_invoice.purchase_date|date }}</span></dl>
+                <dl class="p-0">Invoice No: <span class="b">{{ purchase_invoice.invoice_no }}</span></dl>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+    <form action="{% url 'add_purchase_items' purchase_invoice.uuid %}" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="mb-3 col-md-5">
+                <select class="form-control opening-dropdown" name="product" id="id_product" style="width:100%; height:150%;" required>
+                    <option value="" selected>-- Select Product --</option>
+                    {% for product in products %}
+                    <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.product_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3 col-md-2">
+                <input type="number" step="any" class="form-control" id="id_product_price" name="product_price" placeholder="Amount" required>
+            </div>
+
+            <div class="mb-3 col-md-2">
+                <input type="number" step="any" class="form-control" id="qty" name="purchase_qty" placeholder="Qty" required>
+            </div>
+
+            <div class="mb-3 col-md-3">
+                <input type="date" class="form-control" name="expiry_date" placeholder="Expiry Date">
+            </div>
+        </div>
+        <div class="mt-2 d-flex flex-row-reverse">
+            <input type="submit" class="btn btn-primary px-5" value="Add">
+        </div>
+    </form>
+</div>
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Expiry Date</th>
+                    <th>Qty</th>
+                    <th>Amount</th>
+                    <th>Sub Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if purchase_invoice.purchase_products.all %}
+                {% for item in purchase_invoice.purchase_products.all %}
+                    <tr>
+                        <form action="{% url 'add_purchase_items' purchase_invoice.uuid %}" method="POST">{% csrf_token %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.product.product_name }} <input type="text" name="product" value="{{ item.product.id }}" hidden></td>
+                        <td>{% if item.expiry_date %}{{ item.expiry_date|date }}{% else %}-{% endif %} <input type="date" name="expiry_date" value="{% if item.expiry_date %}{{ item.expiry_date|date:'Y-m-d' }}{% endif %}" hidden></td>
+                        <td>{{ item.product_price }} <input type="text" name="product_price" value="{{ item.product_price }}" hidden></td>
+                        <td>
+                            <div class="col">
+                                <div class="input-group input-spinner">
+                                    <div class="input-group-prepend">
+                                        <a href="{% url 'remove_purchase_items' item.id %}" class="btn btn-light" type="button"> <i class="fa fa-minus"></i> </a>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ item.purchase_qty|floatformat:0 }}" name="purchase_qty">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-light" type="submit" id="button-plus"> <i class="fa fa-plus"></i> </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-right">{{ item.sub_total }}</td>
+                        <td></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center">No data!</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<div class="card">
+    <div class="card-body">
+        <div>
+            <dl class="dlist-align">
+                <dt>Total price:</dt>
+                <dd class="text-right">$ {{total}}</dd>
+            </dl>
+            <dl class="dlist-align">
+                <dt>Shipping Fee:</dt>
+                <dd class="text-right">$ {{purchase_invoice.shipping_fee}}</dd>
+            </dl>
+            <dl class="dlist-align">
+                <dt>Delivery Fee:</dt>
+                <dd class="text-right">$ {{purchase_invoice.delivery_fee}}</dd>
+            </dl>
+            <dl class="dlist-align">
+                <dt>Grand Total:</dt>
+                <dd class="text-right">$ {{grand_total}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="card-footer" align="right">
+        <a href="{% url 'complete_purchase' purchase_invoice.uuid %}" class="btn btn-primary">Complete Order</a>
+    </div>
+</div>
+<script src="{% static 'vendor/select2/js/select2.full.min.js' %}"></script>
+<script src="{% static 'js/select2-init.js' %}"></script>
+<script>
+$('#id_product').on('select2:select', function (e) {
+      var data = e.params.data;
+      var selectedElement = data.element;
+      var price = $(selectedElement).data('price');
+      document.getElementById('id_product_price').value = price || '';
+      document.getElementById('purchase_qty').focus().select();
+});
+</script>
+
+{% endblock %}

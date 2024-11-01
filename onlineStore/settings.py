@@ -10,23 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o^x0*19g!vevnrv-3z5koswpde5rk%4^e-c1**j(ny7bta*6$0'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -45,6 +44,7 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
+    'purchase',
 ]
 
 MIDDLEWARE = [
@@ -55,14 +55,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'core.middleware.CurrentUserMiddleware',
 
 ]
 
-# SESSION_EXPIRE_SECONDS = 3600  # 1 hour
-# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-# SESSION_TIMEOUT_REDIRECT = 'accounts/login'
+SESSION_EXPIRE_SECONDS = 3600  # 1 hour
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_TIMEOUT_REDIRECT = '/account/login/'
+
+HITPAY_API_KEY = "a15eb121fb6d0379a12d2b183a85d60dab56ff1b0d01917f0101b83228d5654a"
+HITPAY_SALT = "0yOgC5x6dN18O4DBvp7cT3DkOmedunw9opvUHggQkPlI6W25MFjKxXribKARX879"
+HITPAY_ENDPOINT = "https://api.sandbox.hit-pay.com/v1/payment-requests"
 
 ROOT_URLCONF = 'onlineStore.urls'
 
@@ -80,6 +84,7 @@ TEMPLATES = [
                 'carts.context_processors.counter',
                 'category.context_processors.menu_links',
                 'brand.context_processors.menu_links',
+                'store.context_processors.store_info',
             ],
         },
     },
@@ -123,11 +128,22 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Singapore'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_L10N = True
+
+USE_TZ = False
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'YK21 MiniMart <yk21onlinestore@gmail.com>'
 
 
 # Static files (CSS, JavaScript, Images)

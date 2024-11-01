@@ -2,32 +2,8 @@
 {% load static %}
 {% block content %}
 
-<script>
-    function toggleCard() {
-        var select = document.getElementById("orderType");
-        var cardDelivery = document.getElementById("optionDelivery");
+{% include 'orders/_jsToggleAddress.html' %}
 
-        var postalCodeField = document.getElementById('postal_code');
-        var addressLine1Field = document.getElementById('address_line_1');
-
-        if (select.value === "deli") {
-            // Show the delivery section and enable required fields
-            cardDelivery.style.display = "block";
-            postalCodeField.setAttribute('required', 'required');
-            addressLine1Field.setAttribute('required', 'required');
-        } else {
-            // Hide the delivery section and remove required attributes
-            cardDelivery.style.display = "none";
-            postalCodeField.removeAttribute('required');
-            addressLine1Field.removeAttribute('required');
-        }
-    }
-
-    // Initialize visibility on page load
-    document.addEventListener("DOMContentLoaded", function() {
-        toggleCard(); // Set the correct visibility based on the default selected option
-    });
-</script>
 {% include 'includes/alerts.html' %}
 <section class="section-content padding-y bg">
     <div class="container">
@@ -56,7 +32,7 @@
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label>Select Options</label>
-                                    <select id="orderType" name="order_type" class="form-control" onchange="toggleCard()" required>
+                                    <select id="orderType" name="order_type" class="form-control" onchange="toggleDeliveryAddress()" required>
                                         <option value="deli" selected>Delivery</option>
                                         <option value="col" {% if request.GET.site == site.uuid|slugify %}selected{% endif %}>Self Collection</option>
                                     </select>
@@ -75,7 +51,7 @@
                             <div class="form-row">
                                 <div class="col form-group">
                                     <label>Postal Code</label>
-                                    <input type="text" id="postal_code" name="postal_code" class="form-control">
+                                    <input type="text" id="postal_code" name="postal_code" class="form-control" onblur="fetchAddress()">
                                 </div>
                                 <div class="col form-group">
                                     <label>Unit</label>
@@ -124,13 +100,6 @@
                                             </div>
                                             <figcaption class="info">
                                                 <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-                                                <p class="text-muted small">
-                                                    {% if cart_item.variations.all %}
-                                                    {% for item in cart_item.variations.all %}
-                                                    {{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
-                                                    {% endfor %}
-                                                    {% endif %}
-                                                </p>
                                             </figcaption>
                                         </figure>
                                     </td>

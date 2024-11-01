@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<section class="section-conten padding-y bg">
+<section class="section-content padding-y bg">
 
 <div class="container">
 	{% include 'includes/alerts.html' %}
@@ -21,7 +21,7 @@
 					<div class="card-body">
 						<h5 class="card-title">Total Orders</h5>
 						<h4>{{orders_count}}</h4>
-						<a href="">View Orders</a>
+						<a href="{% url 'my_orders' %}">View Orders</a>
 					</div>
 				</div>
 			</div>

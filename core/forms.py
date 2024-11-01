@@ -15,7 +15,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['phone_number', 'email', 'password']
+        fields = ['username', 'phone_number', 'email', 'password']
 
     def clean(self):
         cleaned_data = super(RegistrationForm, self).clean()
@@ -29,27 +29,28 @@ class RegistrationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = 'Enter Username'
         self.fields['phone_number'].widget.attrs['placeholder'] = 'Enter Phone Number'
         self.fields['email'].widget.attrs['placeholder'] = 'Enter Email Address'
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
 
-# class UserForm(forms.ModelForm):
-#     class Meta:
-#         model = User
-#         fields = ('first_name', 'last_name', 'phone_number')
-#
-#     def __init__(self, *args, **kwargs):
-#         super(UserForm, self).__init__(*args, **kwargs)
-#         for field in self.fields:
-#             self.fields[field].widget.attrs['class'] = 'form-control'
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'phone_number')
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('name', 'contact_number')
+        fields = ('name',)
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)

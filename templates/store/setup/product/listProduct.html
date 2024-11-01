@@ -33,9 +33,10 @@
                             <th>Product</th>
                             <th>Slug</th>
                             <th>Price</th>
-                            <th>Qty</th>
+                            <th>Available</th>
+                            <th>Balance</th>
                             <th>Category</th>
-                            <th>Price</th>
+                            <th>Brand</th>
                             <th>Available?</th>
                             <th>Status</th>
                             <th></th>
@@ -50,7 +51,8 @@
                             <td>{{item.product_name}}</td>
                             <td>{{item.slug}}</td>
                             <td>{{item.price}}</td>
-                            <td></td>
+                            <td>{{ item.get_qty.available_qty|floatformat:0 }}</td>
+                            <td>{{ item.get_qty.balance_qty|floatformat:0 }}</td>
                             <td>{{item.category.category_name}}</td>
                             <td>{{item.brand.brand_name}}</td>
                             <td>{% if item.is_available %} <span class="badge badge-success">Available</span> {% else %} <span class="badge badge-danger"> Not Available</span> {% endif %}</td>
@@ -75,7 +77,7 @@
                         {% endfor %}
                         {% else %}
                         <tr>
-                            <td colspan="15" style="text-align:center">No data!</td>
+                            <td colspan="12" style="text-align:center">No data!</td>
                         </tr>
                         {% endif %}
                     </tbody>

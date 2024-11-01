@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% load static %}
+{% load custom_filters %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/shopping-cart-logo-design-template-0bd5ecad376e9cf5ab1e70fb3c8df3c4_screen.jpg?ts=1584204397" alt="Company Logo" style="max-width: 100px;">
+        </div>
+        <h2 style="color: #333;">Thank you for your order, {{ order.full_name }}!</h2>
+        <p>We have received your order, and it is now being processed. Here are the details:</p>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+
+            <div style="width: 48%;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">Order Details</h3>
+                <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                <p><strong>Order Type:</strong> {{ order.payment.payment_method.payment_method }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_date|date }}</p>
+                <p><strong>Status:</strong> {{ order.status.external_status }}</p>
+            </div>
+
+            <div style="width: 48%;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">Delivery Address</h3>
+                <p>{{ order.full_name }}</p>
+                <p>{{ order.phone }}</p>
+                {% if order.email %}
+                <p>{{ order.email }}</p>
+                {% endif %}
+                {% if order.delivery_address.unit or order.delivery_address.floor %}
+                <p>#{{ order.delivery_address.floor }} - {{ order.delivery_address.unit }}</p>
+                {% endif %}
+                <p>{{order.delivery_address.postal_code}}</p>
+                <p>{{ order.delivery_address.full_address }}</p>
+            </div>
+        </div>
+        <p><strong>Remarks:</strong> {{ order.order_note }}</p>
+        <h3>Order Summary</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background-color: #f0f0f0;">
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Product</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Qty</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Price</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Total</th>
+            </tr>
+            {% for item in ordered_products %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.product.product_name }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.quantity }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${{ item.product.price }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${{ item.quantity|multiply:item.product.price }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div style="margin-top: 20px; text-align: right;">
+            <p><strong>Sub Total:</strong> ${{ subtotal }}</p>
+            <p><strong>Tax:</strong> ${{ order.tax }}</p>
+            <p><strong>Delivery Fee:</strong> ${{ order.delivery_fee }}</p>
+            <p><strong>Grand Total:</strong> ${{ grand_total }}</p>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px;">Thank you for shopping with us!</p>
+    </div>
+</body>
+</html>

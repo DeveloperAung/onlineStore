@@ -1,0 +1,136 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+<div class="row p-2">
+	<div class="col-sm-6 col-md-3 text-center">
+		<div class="card">
+			<div class="card-header">Today Sales <i class="fas fa-pager fa-lg"></i></div>
+				<div class="card-body border border-primary" style="background-color:#0D9488">
+				<h3 class="text-white">$1500</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-md-3 text-center">
+		<div class="card">
+			<div class="card-header">This Month Sales</div>
+			<div class="card-body border border-success" style="background-color:#FB923C">
+				<h3 class="text-white">$1500</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-md-3 text-center">
+		<div class="card">
+			<div class="card-header">Last Month Sales</div>
+			<div class="card-body border border-warning" style="background-color:#3B82F6">
+				<h3 class="text-white">$1500</h3>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6 col-md-3 text-center">
+		<div class="card">
+			<div class="card-header">This Year Sales</div>
+			<div class="card-body border border-warning" style="background-color:#0D9488">
+				<h3 class="text-white">$1500</h3>
+			</div>
+		</div>
+	</div>
+</div>
+<article class="">
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						<h5 class="card-title">Total Orders</h5>
+						<h4 class="text-info">125</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						<h5 class="card-title">Pending</h5>
+						<h4 class="text-warning">5</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						<h5 class="card-title">Processing</h5>
+						<h4 class="text-warning">5</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="card" style="text-align:center;">
+					<div class="card-body">
+						<h5 class="card-title">Completed</h5>
+						<h4 class="text-success">200</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</article>
+<div class="p-3">
+	<div class="table-responsive" style="min-height:500px;">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Invoice No.</th>
+					<th>Purchase Date</th>
+					<th>Total Products</th>
+					<th>Total Items</th>
+					<th>Total Amount</th>
+					<th>Order Type</th>
+					<th>Payment Type</th>
+					<th>Grand Total</th>
+					<th>Status</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			{% if page_objs %}
+			{% for item in page_objs %}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td><a href="{% url 'form_purchase' item.uuid %}">{{ item.invoice_no }}</a></td>
+					<td>{{ item.purchase_date|date }}</td>
+					<td>{{ item.get_items_count.total_items }}</td>
+					<td>{{ item.get_items_count.total_qty }}</td>
+					<td>{{ item.get_amount.total }}</td>
+					<td>{{ item.shipping_fee }}</td>
+					<td>{{ item.delivery_fee }}</td>
+					<td>{{ item.get_amount.grand_total }}</td>
+					<td>{% if item.status_id == 9 %} <span class="badge badge-success">Completed</span> {% else %} <span class="badge badge-danger"> In Progress</span> {% endif %}</td>
+
+					<td class="py-2 text-end">
+						<div class="dropdown" align="right">
+						  <button class="btn" type="button" data-toggle="dropdown" aria-expanded="false">
+							<span class="fa fa-ellipsis-v"></span>
+						  </button>
+						  <div class="dropdown-menu">
+							<a class="dropdown-item" href="">Edit</a>
+							<div class="dropdown-divider"></div>
+							{% if item.is_active %}
+								<a class="dropdown-item text-danger update_status" data-id="{{ item.id }}" href="#" data-url="">Inactive</a>
+							{% else %}
+								<a class="dropdown-item text-success update_status" data-id="{{ item.id }}" href="#" data-url="">Active</a>
+							{% endif %}
+						  </div>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+				{% else %}
+				<tr>
+					<td colspan="15" style="text-align:center">No data!</td>
+				</tr>
+				{% endif %}
+			</tbody>
+		</table>
+		{% include 'includes/pagination.html' %}
+	</div>
+</div>
+{% endblock %}

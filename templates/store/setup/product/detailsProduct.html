@@ -56,7 +56,7 @@
 
 							<hr>
 
-							{% if single_product.stock <= 0 %}
+							{% if single_product.get_qty.available_qty <= 0 %}
 							<h5 class="text-danger">Out of Stock</h5>
 							{% else %}
 							<button type="submit" class="btn  btn-primary"> <span class="text">Add to Cart</span> <i class="fa fa-shopping-cart"></i> </button>

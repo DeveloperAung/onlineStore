@@ -1,0 +1,43 @@
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const paymentMethodId = document.getElementById("paymentType").value;
+    updatePaymentMethod(paymentMethodId);
+});
+
+function updatePaymentMethod(paymentMethodId) {
+    const orderUUID = "{{ order.uuid }}";
+
+    fetch("{% url 'update_payment_method' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            payment_method_id: paymentMethodId,
+            orderUUID: orderUUID
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.deli_fee) {
+                document.getElementById("id_delivery_fee").innerText = data.deli_fee;
+                document.getElementById("id_grand_total").innerText = {{ grand_total }} + data.deli_fee;
+
+                const description = data.desc;
+                document.getElementById("id_payment_desc").innerText = description;
+                const div = document.getElementById("id_desc_section");
+                if (description != "") {
+                    div.style.display = "block";
+                } else {
+                    div.style.display = "none";
+                }
+            }
+        } else {
+            alert("Error updating payment status.");
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>

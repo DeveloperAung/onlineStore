@@ -1,0 +1,31 @@
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCJkWvYBT7nbET4AVs-7cT8dR679UVMWA&callback"></script>
+<script>
+      function fetchAddress() {
+          const postalCode = document.getElementById("postal_code").value;
+          const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&region=SG&key=AIzaSyAgtqJb0uMxGezuujYMSuX8E5_fD7dUurE`;
+
+
+          fetch(geocodeUrl)
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === "OK") {
+                      const place = data.results[0];
+                      const fullAddress = data.results[0].formatted_address;
+
+                      alert(fullAddress)
+                      document.getElementById("address_line_1").value = fullAddress;
+                      document.getElementById("city").value = getComponent(place, "locality");
+                      document.getElementById("country").value = getComponent(place, "country");
+                  } else {
+                    alert(data.status);
+                      alert("Address not found. Please check the postal code.");
+                  }
+              })
+              .catch(error => console.error("Error:", error));
+      }
+
+      function getComponent(place, type) {
+          const component = place.address_components.find(comp => comp.types.includes(type));
+          return component ? component.long_name : "";
+      }
+  </script>

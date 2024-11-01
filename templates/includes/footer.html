@@ -2,18 +2,15 @@
 <footer class="section-footer border-top">
 	<div class="container">
 		<section class="footer-bottom border-top row">
-			<div class="col-md-2">
-				<p class="text-muted"> &copy 2019 Company name </p>
+			<div class="col-md-3">
+				<p>Copyright © <script>
+					document.write(new Date().getFullYear());
+				</script> <a href="">{{ info.name }}</a>.</p>
 			</div>
-			<div class="col-md-8 text-md-center">
-				<span  class="px-2">info@pixsellz.io</span>
-				<span  class="px-2">+879-332-9375</span>
-				<span  class="px-2">Street name 123, Avanue abc</span>
-			</div>
-			<div class="col-md-2 text-md-right text-muted">
-				<i class="fab fa-lg fa-cc-visa"></i>
-				<i class="fab fa-lg fa-cc-paypal"></i>
-				<i class="fab fa-lg fa-cc-mastercard"></i>
+			<div class="col-md-9 text-md-center">
+				<span class="px-2"><a href="mailto:{{ info.email }}"><i class="fa fa-envelope"></i> {{ info.email }}</a></span>
+				<span class="px-2"><a href="tel:{{ info.contact }}"><i class="fa fa-lg fa-mobile-phone"></i> {{ info.contact }}</a></span>
+				<span class="px-2"><i class="fa fa-map"></i> {{ info.address }}</span>
 			</div>
 		</section>
 	</div><!-- //container -->

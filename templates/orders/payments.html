@@ -3,32 +3,35 @@
 
 {% block content %}
 
-
 <section class="section-content padding-y bg">
     <div class="container">
         <h4 class="text-center mb-20">Review Your Order and Make Payment</h4>
         <div class="row">
             <aside class="col-lg-8">
                 <div class="card mb-3">
-                    <h5 class="card-header">Billing Address</h5>
+                    <div class="card-header">
+                        <div class="row">
+                            <h5 class="col-8">Delivery Address</h5><a href="" class="fa fa-edit col-4 text-right mt-2"> Edit</a>
+                        </div>
+                    </div>
+
                     <div class="card-body">
                         <p class="card-text mb-0">{{order.full_name}}</p>
-                        <p class="card-text mb-0">{{order.full_address}}</p>
-                        <p class="card-text mb-0">{{order.city}}, {{order.state}}</p>
-                        <p class="card-text mb-0">{{order.country}}</p>
                         <p class="card-text mb-0">{{order.email}}</p>
                         <p class="card-text mb-0">{{order.phone}}</p>
+                        {% if order.delivery_address %}
+                        {% if order.delivery_address.floor %}
+                            <p class="card-text mb-0">{{order.delivery_address.postal_code}}{% if order.delivery_address.floor %}, #{{order.delivery_address.floor}}-{{order.delivery_address.unit}}{% endif %}</p>
+                            <p class="card-text mb-0">{{order.delivery_address.full_address}}</p>
+                        {% endif %}
+                        {% endif %}
+
                         {% if order.order_note %}
                         <b>Order Note: </b> {{order.order_note}}
                         {% endif %}
                     </div>
                 </div>
-                <div class="card mb-3">
-                    <h5 class="card-header">Payment Method</h5>
-                    <div class="card-body">
-                        <p class="card-text">PayPal</p>
-                    </div>
-                </div>
+
                 <div class="card mb-3">
                     <h5 class="card-header">Review Products</h5>
                     <div class="card-body">
@@ -48,15 +51,8 @@
 											<div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm">
 											</div>
 											<figcaption class="info">
-												<a href="{{ cart_item.product.get_url }}" class="title text-dark">{{
-													cart_item.product.product_name }}</a>
+												<a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
 												<p class="text-muted small">
-													{% if cart_item.variations.all %}
-													{% for item in cart_item.variations.all %}
-													{{ item.variation_category | capfirst }} : {{ item.variation_value |
-													capfirst }} <br>
-													{% endfor %}
-													{% endif %}
 												</p>
 											</figcaption>
 										</figure>
@@ -70,7 +66,6 @@
 											<small class="text-muted"> $ {{ cart_item.product.price }} each </small>
 										</div>
 									</td>
-
 								</tr>
                             {% endfor %}
                             </tbody>
@@ -90,99 +85,41 @@
                             <dd class="text-right"> $ {{tax}}</dd>
                         </dl>
                         <dl class="dlist-align">
+                            <dt>Delivery Fee:</dt>
+                            <dd class="text-right text-dark b">$ <span id="id_delivery_fee">{{delivery_fee}}</span></dd>
+                        </dl>
+                        <dl class="dlist-align">
                             <dt>Grand Total:</dt>
-                            <dd class="text-right text-dark b"><strong>$ {{grand_total}}</strong></dd>
+                            <dd class="text-right text-dark b"><strong>$ <span id="id_grand_total">{{grand_total}}</span></strong></dd>
                         </dl>
                         <hr>
+                        <h6 class="card-header p-2">Payment Method</h6>
+                        <form action="{% url 'paid_order' order.order_number %}" id="idCompleteOrder" method="post" onsubmit="prevent_multi_submit(idCompleteOrder, idProceed)"> {% csrf_token %}
+                            <select id="paymentType" name="payment_method" class="form-control" onchange="updatePaymentMethod(this.value)" required>
+                                {% for method in payment_methods %}
+                                <option value="{{ method.id }}" {% if request.GET.site == site.uuid|slugify %}selected{% endif %}>{{ method.payment_method }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary w-100 mt-3" id="idProceed">Proceed</button>
+                        </form>
+                        {% comment %}
+                        <div class="separator mt-3 mb-3">OR</div>
                         <p class="text-center mb-3">
                             <img src="{% static './images/misc/payments.png' %}" height="26">
                         </p>
                         <div id="paypal-button-container"></div>
+                        {% endcomment %}
                     </div>
                 </div>
-                <div class="alert alert-danger" role="alert">
-                    <b>Please Note: </b>This is a demo website. Do not try to make real payments.
+                <div class="alert alert-danger mt-3" role="alert" id="id_desc_section" style="display: none;">
+                    <b>Please Note: </b> <span id="id_payment_desc"></span>
                 </div>
             </aside>
         </div>
     </div>
 </section>
 
-<script>
-	function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-	var amount = "{{ grand_total }}"
-	var url = "{% url 'payments' %}"
-	var csrftoken = getCookie('csrftoken');
-	var orderID = "{{order.order_number}}"
-	var payment_method = 'PayPal'
-	var redirect_url = "{% url 'order_complete' %}"
-	// Render the PayPal button into #paypal-button-container
-	paypal.Buttons({
-
-		style: {
-			color: 'blue',
-			shape: 'rect',
-			label: 'pay',
-			height: 40
-		},
-
-		// Set up the transaction
-		createOrder: function(data, actions) {
-			return actions.order.create({
-				purchase_units: [{
-					amount: {
-						value: amount,
-					}
-				}]
-			});
-		},
-
-		// Finalize the transaction
-		onApprove: function(data, actions) {
-			return actions.order.capture().then(function(details) {
-				// Show a success message to the buyer
-				console.log(details);
-				sendData();
-				function sendData(){
-					fetch(url, {
-						method : "POST",
-						headers: {
-							"Content-type": "application/json",
-							"X-CSRFToken": csrftoken,
-						},
-						body: JSON.stringify({
-							orderID: orderID,
-							transID: details.id,
-							payment_method: payment_method,
-							status: details.status,
-						}),
-					})
-				  .then((response) => response.json())
-				  .then((data) => {
-						window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID;
-					});
-				}
-			});
-		}
-
-
-	}).render('#paypal-button-container');
-
-</script>
+{% include 'orders/_jsUpdatePayment.html' %}
+{% include 'orders/_jsPaypal.html' %}
 
 {% endblock %}

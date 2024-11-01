@@ -43,6 +43,26 @@
                 </div>
 
                 <div class="mb-3 col-md-6">
+                    <label class="form-label">Width<span style="color:red"> *</span></label>
+                    {{ form.width }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Height<span style="color:red"> *</span></label>
+                    {{ form.height }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Weight<span style="color:red"> *</span></label>
+                    {{ form.weight }}
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Unit<span style="color:red"> *</span></label>
+                    {{ form.unit }}
+                </div>
+
+                <div class="mb-3 col-md-6">
                     <label class="form-label">Alert Low Stock Qty <i> {{ form.is_use_low_stock }}</i></label>
                     {{ form.low_lvl_stock }}
                 </div>

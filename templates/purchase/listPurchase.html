@@ -1,0 +1,125 @@
+{% extends 'store/setup/baseSetup.html' %}
+{% block setup %}
+<div class="card">
+    <div class="card-header">
+        <div class="col-md-2">
+            <h6 class="title">Purchase List</h6>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="row">
+            <div class="col-md-9">
+                <form method="get" action="" class="row">
+                    <div class="col-md-6 mb-2">
+                        <input type="text" class="form-control" name="item_name" placeholder="Search by invoice no..." value="">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3" align="right">
+                <button type="button" class="btn btn-sm btn-success px-3" data-toggle="modal" data-target="#invoiceModal">
+                  + Add New
+                </button>
+                <a href="" class="btn btn-sm light btn-primary px-3"><span class="fa fa-file-export"> </span> Export</a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive" style="min-height:500px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Invoice No.</th>
+                            <th>Purchase Date</th>
+                            <th>Total Products</th>
+                            <th>Total Items</th>
+                            <th>Total Amount</th>
+                            <th>Shipping Cost</th>
+                            <th>Delivery Fee</th>
+                            <th>Grand Total</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if page_objs %}
+                    {% for item in page_objs %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{% url 'form_purchase' item.uuid %}">{{ item.invoice_no }}</a></td>
+                            <td>{{ item.purchase_date|date }}</td>
+                            <td>{{ item.get_items_count.total_items }}</td>
+                            <td>{{ item.get_items_count.total_qty }}</td>
+                            <td>{{ item.get_amount.total }}</td>
+                            <td>{{ item.shipping_fee }}</td>
+                            <td>{{ item.delivery_fee }}</td>
+                            <td>{{ item.get_amount.grand_total }}</td>
+                            <td>{% if item.status_id == 9 %} <span class="badge badge-success">Completed</span> {% else %} <span class="badge badge-danger"> In Progress</span> {% endif %}</td>
+
+                            <td class="py-2 text-end">
+                                <div class="dropdown" align="right">
+                                  <button class="btn" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="fa fa-ellipsis-v"></span>
+                                  </button>
+                                  <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="">Edit</a>
+                                    <div class="dropdown-divider"></div>
+                                    {% if item.is_active %}
+                                        <a class="dropdown-item text-danger update_status" data-id="{{ item.id }}" href="#" data-url="">Inactive</a>
+                                    {% else %}
+                                        <a class="dropdown-item text-success update_status" data-id="{{ item.id }}" href="#" data-url="">Active</a>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="11" style="text-align:center">No data!</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% include 'includes/pagination.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="invoiceModalLabel">Create Purchase Invoice</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <form class="profile-form" action="{% url 'create_purchase_invoice' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label">Purchase Date<span style="color:red"> *</span></label>
+                        {{ form_create_invoice.purchase_date }}
+                    </div>
+
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label">Invoice No.<span style="color:red"> *</span></label>
+                        {{ form_create_invoice.invoice_no }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

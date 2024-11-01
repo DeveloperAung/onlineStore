@@ -41,7 +41,7 @@ class BaseModel(models.Model):
 
 class Status(BaseModel):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
-    parent_code = models.CharField(max_length=10, blank=True)
+    parent_code = models.CharField(max_length=10, blank=True, null=True)
     status_code = models.CharField(max_length=10, unique=True)
     internal_status = models.CharField(max_length=255, blank=True)
     external_status = models.CharField(max_length=255, blank=True)
@@ -54,10 +54,10 @@ class Status(BaseModel):
         unique_together = ('internal_status', 'parent_code')
 
     def save(self, *args, **kwargs):
-        # Check if field2 is empty before setting its value
+        self.parent_code = self.parent.status_code if self.parent else None
         if not self.external_status:
-            self.external_status = self.internal_status  # Set field2 to field1 if field2 is empty
-        super().save(*args, **kwargs)  # Call the parent class's save method
+            self.external_status = self.internal_status
+        super().save(*args, **kwargs)
 
     def __str__(self):
         status = self.parent.internal_status if self.parent else ''

@@ -109,11 +109,8 @@ def add_product(request):
         form_gallery = AddProductGalleryForm(request.POST, request.FILES)
         files = request.FILES.getlist('image')
         if form.is_valid() and form_gallery.is_valid():
-            # print('is_available', form.is_available)
-            # print('is_use', form.is_use_low_stock)
             product = form.save()
             for f in files:
-                print('file', f)
                 ProductGallery.objects.create(product=product, image=f)
             messages.success(request, 'New Product has been added!')
             return redirect('list_product')
