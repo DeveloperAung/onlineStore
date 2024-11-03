@@ -12,7 +12,7 @@ def _cart_id(request):
     cart_id = request.session.get('shopping_cart_id')
     if request.user.is_authenticated:
         shopping_cart = Cart.objects.filter(created_by=request.user).first()
-        request.session['shopping_cart_id'] = str(shopping_cart.cart_id)
+        request.session['shopping_cart_id'] = str(shopping_cart.cart_id) if shopping_cart else None
     return cart_id
 
 
